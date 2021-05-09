@@ -24,13 +24,15 @@ A new  preventative vaccine (covid91) is under test in clinical trials. Given th
   
 # Method
  
-The first step is isolating the subpopulatoins  
+The first step is isolating the subpopulatoins of Moles, Females, Drug User, and LGBTQ.  
 ```{r}
 moledata<- filter(FinalData,sex=="guy")
 moledata$sex <- as.factor(moledata$sex)
+
 ```
 
 # Moles
+  
  
 ## Bar Chart
   
@@ -52,6 +54,7 @@ basicCC + geom_bar(stat="identity", position = "dodge")
 This bar chart appears to show that approximately 340 people who were infected with COVID- 19, 57% the moles were given the drug, and about 43% that were infected got the placebo. 
   
 # Nummerical Summary  
+
 ```{r}
 table1 <- xtabs(~treatment + infected, data=moledata)
 rowPerc(table1)
@@ -75,13 +78,66 @@ $H_0$ the alternative hyothesis is that the vaccine in fact does mae a differenc
  
 The odds ratio from the fisher exact test is 1.47:1, when taking the odds ratio and computing it into a percent of effectivness by using the formula 0/(1+0)*100 you get 59.5% effecticvness. 
    
+   
+```{r}
+table2 <- xtabs(~infected + treatment, data=FinalData)
+rowPerc(table2)
+colPerc(table2)
+print(table2)
+```
+   
+ The vaccine is 67% effective in Females.  
+   
 # Females
- 
- 
+
+```{r}
+Femaledata <- filter(FinalData,sex== "gal")
+Femaledata$sex <- as.factor(Femaledata$sex)
+levels(Femaledata$infected)
+```
   
 # LGBTQ
   
+```{r}
+LGBTQdata <- filter(FinalData,LGBTQ== "gay")
+LGBTQdata$DrugUser <- as.factor(LGBTQdata$LGBTQ)
+```   
+  
+```{r}
+LGBTQ <- LGBTQdata %>% group_by(infected,treatment) %>% summarize(count=n()) %>% mutate(prcnt=count/sum(count))
+
+ # the group_by followed by summarize(count=n())
+
+basicC <- ggplot(LGBTQ,aes(x=infected,y=count,fill=treatment))
+basicC + geom_bar(stat="identity",position="dodge")
+
+#Now for percentage plot
+
+basicCC <- ggplot(LGBTQ,aes(x=infected,y=prcnt*100,fill=treatment)) 
+basicCC + geom_bar(stat="identity", position = "dodge")
+```  
+  
+  
+  
 # Drug Users
+  
+
+  
+```{r}
+table1 <- xtabs(~treatment + infected, data=moledata)
+rowPerc(table1)
+colPerc(table1)
+print(table1)
+```    
+  
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+fisher.test(table1)
+```    
+  
+The vaccine is 67% effictive in females.   
+    
   
 # Discussion & Conclusion
   
